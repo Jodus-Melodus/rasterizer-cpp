@@ -1,7 +1,10 @@
 #include <iostream>
 
-int main() {
-    std::cout << "Hello world" << std::endl;
+#include "screen.hpp"
+
+int main()
+{
+    ScreenBuffer<1280, 720> screen;
 
     return 0;
 }
