@@ -1,10 +1,17 @@
 cmake_minimum_required(VERSION 3.20)
-project(craster)
 
-# List all source files that contain definitions
-add_executable(craster
-    src/main.cpp
-)
+# Project name and language
+project(rasterizer-cpp LANGUAGES CXX)
 
-# Include path for headers
-target_include_directories(craster PRIVATE include)
+# Specify C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Collect all source files automatically
+file(GLOB SRC_FILES src/*.cpp)
+
+# Create the executable
+add_executable(rasterizer-cpp ${SRC_FILES})
+
+# Include directories
+target_include_directories(rasterizer-cpp PRIVATE include)

@@ -1,1 +1,1 @@
-# cRaster
+# rasterizer-cpp
