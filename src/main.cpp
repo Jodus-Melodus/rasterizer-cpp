@@ -4,7 +4,8 @@
 
 int main()
 {
-    ScreenBuffer<1280, 720> screen;
+    ScreenBuffer<10, 10> screen;
+    std::cout << screen.Ascii();
 
     return 0;
 }
