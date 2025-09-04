@@ -1,16 +1,12 @@
-#include <algorithm>
+#include <array>
 
-template <const unsigned int N>
-class Vector
+class Vector2
 {
 private:
-    float data[N];
+    std::array<float, 2> data;
 
 public:
-    Vector(const float (&input)[N]) { std::copy(input, input + N, data); }
-    Vector() { std::fill(data, data + N, 0.0f); }
-    ~Vector() = default;
-    float &operator[](unsigned int index) { return data[index]; }
-    const float &operator[](unsigned int index) const { return data[index]; }
-    constexpr unsigned int size() const { return N; }
+    Vector2(std::array<float, 2>);
+    const float operator[](const int index);
+    ~Vector2();
 };
