@@ -1,3 +1,4 @@
+#pragma once
 #include <array>
 
 class Vector2
@@ -8,7 +9,6 @@ private:
 public:
     Vector2(std::array<float, 2>);
     const float operator[](const int index);
-    ~Vector2();
 };
 
 class Vector3
@@ -19,5 +19,4 @@ private:
 public:
     Vector3(std::array<float, 3> data);
     const float operator[](const int index);
-    ~Vector3();
 };
