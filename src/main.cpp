@@ -5,20 +5,14 @@
 
 int main()
 {
+    ScreenBuffer<500, 500> screenBuffer;
+    Vector2 a({-10.0, -10.0});
+    Vector2 b({10.0, -10.0});
+    Vector2 c({0.0, 10.0});
+    Color color = {255, 255, 255};
 
-    std::string path = "/workspace/objects/cube.obj";
-    try
-    {
-        Model model(path);
-        std::cout << "Loaded model with "
-                  << model.getVertices().size() << " vertices and "
-                  << model.getFaces().size() << " triangles.\n";
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error loading model: " << e.what() << std::endl;
-        return 1;
-    }
+    screenBuffer.DrawTriangle(a, b, c, color);
+    std::cout << screenBuffer.Ascii() << std::endl;
 
     return 0;
 }
