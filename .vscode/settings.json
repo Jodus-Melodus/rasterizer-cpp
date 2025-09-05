@@ -44,5 +44,10 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp"
+    },
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#09323C",
+        "titleBar.activeBackground": "#0D4655",
+        "titleBar.activeForeground": "#F6FCFE"
     }
 }
