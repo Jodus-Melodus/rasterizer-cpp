@@ -15,13 +15,23 @@ const char GRADIENT[] = {' ', '.', '\'', '`', '^', '\"', ',', ':', ';', 'I', 'l'
 
 constexpr unsigned int GRADIENTSIZE = sizeof(GRADIENT) / sizeof(GRADIENT[0]);
 
-bool calculate_barycentric_coordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+bool calculateBarycentricCoordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
 {
     float denominator = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
     float u = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) / denominator;
     float v = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) / denominator;
     float w = 1.0 - u - v;
     return (u >= 0.0) && (v >= 0.0) && (w >= 0.0);
+}
+
+Vector2 projectCoordinate(Vector3 p, float focalLength)
+{
+    float denominator = focalLength + p.z;
+    if (denominator == 0.0)
+        throw std::runtime_error("Division by 0");
+    float projectedX = (focalLength * p.x) / denominator;
+    float projectedY = (focalLength * p.y) / denominator;
+    return Vector2(projectedX, projectedY);
 }
 
 template <const int W, const int H>
@@ -80,7 +90,7 @@ public:
             {
                 Vector2 p({(float)x, (float)y});
 
-                if (calculate_barycentric_coordinates(p, a, b, c))
+                if (calculateBarycentricCoordinates(p, a, b, c))
                 {
                     Set(x, y, color);
                 }
