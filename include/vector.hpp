@@ -3,20 +3,14 @@
 
 class Vector2
 {
-private:
-    std::array<float, 2> data;
-
 public:
-    Vector2(std::array<float, 2>);
-    const float operator[](const int index);
+    float x, y;
+    Vector2(float x, float y);
 };
 
 class Vector3
 {
-private:
-    std::array<float, 3> data;
-
 public:
-    Vector3(std::array<float, 3> data);
-    const float operator[](const int index);
+    float x, y, z;
+    Vector3(float x, float y, float z);
 };

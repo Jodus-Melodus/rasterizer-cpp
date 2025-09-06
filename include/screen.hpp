@@ -17,9 +17,9 @@ constexpr unsigned int GRADIENTSIZE = sizeof(GRADIENT) / sizeof(GRADIENT[0]);
 
 bool calculate_barycentric_coordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
 {
-    float denominator = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
-    float u = ((b[1] - c[1]) * (p[0] - c[0]) + (c[0] - b[0]) * (p[1] - c[1])) / denominator;
-    float v = ((c[1] - a[1]) * (p[0] - c[0]) + (a[0] - c[0]) * (p[1] - c[1])) / denominator;
+    float denominator = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
+    float u = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) / denominator;
+    float v = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) / denominator;
     float w = 1.0 - u - v;
     return (u >= 0.0) && (v >= 0.0) && (w >= 0.0);
 }
@@ -70,10 +70,10 @@ public:
 
     void DrawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color)
     {
-        int maxX = std::ceil(std::max(a[0], std::max(b[0], c[0])));
-        int minX = std::floor(std::min(a[0], std::min(b[0], c[0])));
-        int maxY = std::ceil(std::max(a[1], std::max(b[1], c[1])));
-        int minY = std::floor(std::min(a[1], std::min(b[1], c[1])));
+        int maxX = std::ceil(std::max(a.x, std::max(b.x, c.x)));
+        int minX = std::floor(std::min(a.x, std::min(b.x, c.x)));
+        int maxY = std::ceil(std::max(a.y, std::max(b.y, c.y)));
+        int minY = std::floor(std::min(a.y, std::min(b.y, c.y)));
 
         for (int y = minY; y < maxY; y++)
             for (int x = minX; x < maxX; x++)

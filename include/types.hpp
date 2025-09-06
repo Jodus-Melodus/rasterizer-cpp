@@ -1,6 +1,6 @@
 #pragma once
 
-struct Color
+typedef struct
 {
     unsigned char r, g, b;
 
@@ -8,4 +8,4 @@ struct Color
     {
         return static_cast<unsigned char>(0.299 * r + 0.587 * g + 0.114 * b);
     }
-};
+} Color;

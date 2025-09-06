@@ -29,12 +29,10 @@ Model::Model(const std::string &path)
         {
             if (tokens.size() != 4)
                 throw std::runtime_error("Invalid object file: expected 3 vertex coordinates");
-
-            std::array<float, 3> values = {
-                std::stof(tokens[1]),
-                std::stof(tokens[2]),
-                std::stof(tokens[3])};
-            Vector3 vec(values);
+            float x = std::stof(tokens[1]);
+            float y = std::stof(tokens[2]);
+            float z = std::stof(tokens[3]);
+            Vector3 vec(x, y, z);
             vertices.push_back(vec);
         }
         else if (tokens[0] == "f")
