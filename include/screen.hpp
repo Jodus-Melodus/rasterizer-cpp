@@ -15,13 +15,23 @@ const char GRADIENT[] = {' ', '.', '\'', '`', '^', '\"', ',', ':', ';', 'I', 'l'
 
 constexpr unsigned int GRADIENTSIZE = sizeof(GRADIENT) / sizeof(GRADIENT[0]);
 
-bool calculate_barycentric_coordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+bool calculateBarycentricCoordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
 {
-    float denominator = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
-    float u = ((b[1] - c[1]) * (p[0] - c[0]) + (c[0] - b[0]) * (p[1] - c[1])) / denominator;
-    float v = ((c[1] - a[1]) * (p[0] - c[0]) + (a[0] - c[0]) * (p[1] - c[1])) / denominator;
+    float denominator = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
+    float u = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) / denominator;
+    float v = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) / denominator;
     float w = 1.0 - u - v;
     return (u >= 0.0) && (v >= 0.0) && (w >= 0.0);
+}
+
+Vector2 projectCoordinate(Vector3 p, float focalLength)
+{
+    float denominator = focalLength + p.z;
+    if (denominator == 0.0)
+        throw std::runtime_error("Division by 0");
+    float projectedX = (focalLength * p.x) / denominator;
+    float projectedY = (focalLength * p.y) / denominator;
+    return Vector2(projectedX, projectedY);
 }
 
 template <const int W, const int H>
@@ -70,17 +80,17 @@ public:
 
     void DrawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color)
     {
-        int maxX = std::ceil(std::max(a[0], std::max(b[0], c[0])));
-        int minX = std::floor(std::min(a[0], std::min(b[0], c[0])));
-        int maxY = std::ceil(std::max(a[1], std::max(b[1], c[1])));
-        int minY = std::floor(std::min(a[1], std::min(b[1], c[1])));
+        int maxX = std::ceil(std::max(a.x, std::max(b.x, c.x)));
+        int minX = std::floor(std::min(a.x, std::min(b.x, c.x)));
+        int maxY = std::ceil(std::max(a.y, std::max(b.y, c.y)));
+        int minY = std::floor(std::min(a.y, std::min(b.y, c.y)));
 
         for (int y = minY; y < maxY; y++)
             for (int x = minX; x < maxX; x++)
             {
                 Vector2 p({(float)x, (float)y});
 
-                if (calculate_barycentric_coordinates(p, a, b, c))
+                if (calculateBarycentricCoordinates(p, a, b, c))
                 {
                     Set(x, y, color);
                 }

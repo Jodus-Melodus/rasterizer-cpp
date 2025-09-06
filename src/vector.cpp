@@ -1,21 +1,14 @@
 #include "vector.hpp"
 
-Vector2::Vector2(std::array<float, 2> data)
+Vector2::Vector2(float x, float y)
 {
-    this->data = data;
+    this->x = x;
+    this->y = y;
 }
 
-const float Vector2::operator[](const int index)
+Vector3::Vector3(float x, float y, float z)
 {
-    return this->data.at(index);
-}
-
-Vector3::Vector3(std::array<float, 3> data)
-{
-    this->data = data;
-}
-
-const float Vector3::operator[](const int index)
-{
-    return this->data.at(index);
+    this->x = x;
+    this->y = y;
+    this->z = z;
 }
