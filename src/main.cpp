@@ -20,7 +20,7 @@ void EnableANSI()
 int main()
 {
     EnableANSI();
-    ScreenBuffer<500, 200> screenBuffer;
+    ScreenBuffer<208, 50> screenBuffer;
 
     bool running = true;
     while (running)
@@ -40,7 +40,7 @@ int main()
         Vector2 a(-10, -10);
         Vector2 b(10, -10);
         Vector2 c(0, 10);
-        Color color = {100, 0, 255};
+        Color color = {255, 255, 255};
         screenBuffer.DrawTriangle(a, b, c, color);
 
         std::cout << screenBuffer.Ascii() << std::endl;
