@@ -62,7 +62,13 @@ public:
         return GRADIENT[index];
     }
 
-    std::string Ascii() const
+    void Clear()
+    {
+        buffer = {};
+    }
+
+    std::string
+    Ascii() const
     {
         std::string result;
 
@@ -80,10 +86,10 @@ public:
 
     void DrawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color)
     {
-        int maxX = std::ceil(std::max(a.x, std::max(b.x, c.x)));
-        int minX = std::floor(std::min(a.x, std::min(b.x, c.x)));
-        int maxY = std::ceil(std::max(a.y, std::max(b.y, c.y)));
-        int minY = std::floor(std::min(a.y, std::min(b.y, c.y)));
+        int maxX = (int)std::ceilf((std::max)(a.x, (std::max)(b.x, c.x)));
+        int minX = (int)std::floorf((std::min)(a.x, (std::min)(b.x, c.x)));
+        int maxY = (int)std::ceilf((std::max)(a.y, (std::max)(b.y, c.y)));
+        int minY = (int)std::floorf((std::min)(a.y, (std::min)(b.y, c.y)));
 
         for (int y = minY; y < maxY; y++)
             for (int x = minX; x < maxX; x++)
