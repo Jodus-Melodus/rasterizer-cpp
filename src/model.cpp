@@ -21,9 +21,7 @@ Model::Model(const std::string &path)
         std::vector<std::string> tokens;
         std::string token;
         while (ss >> token)
-        {
             tokens.push_back(token);
-        }
 
         if (tokens[0] == "v")
         {
@@ -45,9 +43,7 @@ Model::Model(const std::string &path)
                 std::string token;
 
                 while (std::getline(ss, token, '/'))
-                {
                     indices.push_back(std::stoi(token));
-                }
 
                 if (indices.size() != 3)
                     throw std::runtime_error("Invalid object file: expected 3 face indices");
@@ -60,9 +56,7 @@ Model::Model(const std::string &path)
             }
 
             for (size_t i = 1; i < faceIndices.size() - 1; i++)
-            {
                 faces.push_back(std::make_tuple(faceIndices[0], faceIndices[i], faceIndices[i + 1]));
-            }
         }
     }
 }

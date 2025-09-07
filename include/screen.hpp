@@ -6,12 +6,7 @@
 #include "types.hpp"
 #include "vector.hpp"
 
-const char GRADIENT[] = {' ', '.', '\'', '`', '^', '\"', ',', ':', ';', 'I', 'l', '!', 'i',
-                         '>', '<', '~', '+', '_', '-', '?', ']', '[', '}', '{', '1', ')', '(',
-                         '|', '\\', '/', '*', 't', 'f', 'j', 'r', 'x', 'n', 'u', 'v', 'c', 'z',
-                         'X', 'Y', 'U', 'J', 'C', 'L', 'Q', '0', 'O', 'Z', 'm', 'w', 'q', 'p',
-                         'd', 'b', 'k', 'h', 'a', 'o', '*', '#', 'M', 'W', '&', '8', '%', 'B',
-                         '@', '$'};
+const char GRADIENT[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};
 
 constexpr unsigned int GRADIENTSIZE = sizeof(GRADIENT) / sizeof(GRADIENT[0]);
 
@@ -28,7 +23,7 @@ Vector2 projectCoordinate(Vector3 p, float focalLength)
 {
     float denominator = focalLength + p.z;
     if (denominator == 0.0)
-        throw std::runtime_error("Division by 0");
+        denominator = 0.00001;
     float projectedX = (focalLength * p.x) / denominator;
     float projectedY = (focalLength * p.y) / denominator;
     return Vector2(projectedX, projectedY);
@@ -74,9 +69,7 @@ public:
         for (int y = -yOffset; y < H - yOffset; y++)
         {
             for (int x = -xOffset; x < W - xOffset; x++)
-            {
                 result.push_back(GetAsciiGradient(x, y));
-            }
             result.push_back('\n');
         }
 
