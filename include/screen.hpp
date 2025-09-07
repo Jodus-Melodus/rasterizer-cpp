@@ -67,8 +67,7 @@ public:
         buffer = {};
     }
 
-    std::string
-    Ascii() const
+    std::string Ascii() const
     {
         std::string result;
 
