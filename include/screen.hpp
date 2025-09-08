@@ -62,7 +62,7 @@ public:
         buffer = {};
     }
 
-    std::string Ascii() const
+    std::string Display() const
     {
         std::string result;
 
