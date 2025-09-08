@@ -3,7 +3,9 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include "types.hpp"
+#include "model.hpp"
 #include "vector.hpp"
 
 bool calculateBarycentricCoordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
@@ -76,10 +78,32 @@ public:
         for (int y = -yOffset; y < H - yOffset; y++)
         {
             for (int x = -xOffset; x < W - xOffset; x++)
-                result.push_back(Get(x, y).display());
+                result.append(Get(x, y).display());
             result.push_back('\n');
         }
 
         return result;
+    }
+
+    void drawModel(const Model &model, float focalLength)
+    {
+        std::random_device rng;
+        std::mt19937 gen(rng());
+        std::uniform_int_distribution<int> dist(0, 255);
+        size_t faceIndex1, faceIndex2, faceIndex3;
+
+        for (std::tuple<size_t, size_t, size_t> faceIndices : model.getFaces())
+        {
+            std::tie(faceIndex1, faceIndex2, faceIndex3) = faceIndices;
+            std::vector<Vector3> vertices = model.getVertices();
+            Vector2 vertex1 = projectCoordinate(vertices[faceIndex1], focalLength);
+            Vector2 vertex2 = projectCoordinate(vertices[faceIndex2], focalLength);
+            Vector2 vertex3 = projectCoordinate(vertices[faceIndex3], focalLength);
+            Color color = {
+                .r = static_cast<unsigned char>(dist(gen)),
+                .g = static_cast<unsigned char>(dist(gen)),
+                .b = static_cast<unsigned char>(dist(gen))};
+            DrawTriangle(vertex1, vertex2, vertex3, color);
+        }
     }
 };
