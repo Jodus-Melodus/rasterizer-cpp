@@ -37,7 +37,7 @@ int main()
         }
 
         screen.Clear();
-        std::cout << "\033[H\033[J"; // Clear screen and move cursor to Home
+        std::cout << "\x1b[2J\x1b[H"; // Clear screen and move cursor to Home
         std::cout << screen.Display() << std::endl;
         std::this_thread::sleep_for(100ms);
     }

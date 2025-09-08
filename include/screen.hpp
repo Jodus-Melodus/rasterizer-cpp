@@ -6,10 +6,6 @@
 #include "types.hpp"
 #include "vector.hpp"
 
-const char GRADIENT[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};
-
-constexpr unsigned int GRADIENTSIZE = sizeof(GRADIENT) / sizeof(GRADIENT[0]);
-
 bool calculateBarycentricCoordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
 {
     float denominator = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
@@ -37,45 +33,6 @@ private:
     int xOffset;
     int yOffset;
 
-public:
-    ScreenBuffer() : buffer{}, xOffset(W / 2), yOffset(H / 2) {}
-
-    Color Get(int x, int y) const
-    {
-        return buffer[y + yOffset][x + xOffset];
-    }
-
-    void Set(int x, int y, Color color)
-    {
-        buffer[y + yOffset][x + xOffset] = color;
-    }
-
-    char GetAsciiGradient(int x, int y) const
-    {
-        Color color = Get(x, y);
-        int index = std::clamp(int(color.toGray() / 255.0 * (GRADIENTSIZE - 1)), 0, int(GRADIENTSIZE - 1));
-        return GRADIENT[index];
-    }
-
-    void Clear()
-    {
-        buffer = {};
-    }
-
-    std::string Display() const
-    {
-        std::string result;
-
-        for (int y = -yOffset; y < H - yOffset; y++)
-        {
-            for (int x = -xOffset; x < W - xOffset; x++)
-                result.push_back(GetAsciiGradient(x, y));
-            result.push_back('\n');
-        }
-
-        return result;
-    }
-
     void DrawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color)
     {
         int maxX = (int)std::ceilf((std::max)(a.x, (std::max)(b.x, c.x)));
@@ -93,5 +50,36 @@ public:
                     Set(x, y, color);
                 }
             }
+    }
+    Color Get(int x, int y) const
+    {
+        return buffer[y + yOffset][x + xOffset];
+    }
+
+    void Set(int x, int y, Color color)
+    {
+        buffer[y + yOffset][x + xOffset] = color;
+    }
+
+public:
+    ScreenBuffer() : buffer{}, xOffset(W / 2), yOffset(H / 2) {}
+
+    void Clear()
+    {
+        buffer = {};
+    }
+
+    std::string Display() const
+    {
+        std::string result;
+
+        for (int y = -yOffset; y < H - yOffset; y++)
+        {
+            for (int x = -xOffset; x < W - xOffset; x++)
+                result.push_back(Get(x, y).display());
+            result.push_back('\n');
+        }
+
+        return result;
     }
 };
