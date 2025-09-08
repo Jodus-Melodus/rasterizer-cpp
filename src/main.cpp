@@ -20,12 +20,13 @@ void EnableANSI()
 int main()
 {
     EnableANSI();
-    ScreenBuffer<208, 50> screenBuffer;
-
+    ScreenBuffer<208, 50> screen;
+    Model model("../../objects/cone.obj");
+    float focalLength = 50.0;
     bool running = true;
+
     while (running)
     {
-        std::cout << "\033[H\033[J"; // Clear screen and move cursor to Home
 
         // Keyboard input
         if (_kbhit())
@@ -37,16 +38,11 @@ int main()
             }
         }
 
-        Vector2 a(-10, -10);
-        Vector2 b(10, -10);
-        Vector2 c(0, 10);
-        Color color = {255, 255, 255};
-        screenBuffer.DrawTriangle(a, b, c, color);
-
-        std::cout << screenBuffer.Ascii() << std::endl;
-
-        screenBuffer.Clear();
-        std::this_thread::sleep_for(500ms);
+        screen.Clear();
+        screen.drawModel(model, focalLength);
+        std::cout << "\x1b[2J\x1b[H";
+        std::cout << screen.Display() << std::flush;
+        std::this_thread::sleep_for(100ms);
     }
     return 0;
 }

@@ -3,12 +3,10 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include "types.hpp"
+#include "model.hpp"
 #include "vector.hpp"
-
-const char GRADIENT[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};
-
-constexpr unsigned int GRADIENTSIZE = sizeof(GRADIENT) / sizeof(GRADIENT[0]);
 
 bool calculateBarycentricCoordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
 {
@@ -37,45 +35,6 @@ private:
     int xOffset;
     int yOffset;
 
-public:
-    ScreenBuffer() : buffer{}, xOffset(W / 2), yOffset(H / 2) {}
-
-    Color Get(int x, int y) const
-    {
-        return buffer[y + yOffset][x + xOffset];
-    }
-
-    void Set(int x, int y, Color color)
-    {
-        buffer[y + yOffset][x + xOffset] = color;
-    }
-
-    char GetAsciiGradient(int x, int y) const
-    {
-        Color color = Get(x, y);
-        int index = std::clamp(int(color.toGray() / 255.0 * (GRADIENTSIZE - 1)), 0, int(GRADIENTSIZE - 1));
-        return GRADIENT[index];
-    }
-
-    void Clear()
-    {
-        buffer = {};
-    }
-
-    std::string Ascii() const
-    {
-        std::string result;
-
-        for (int y = -yOffset; y < H - yOffset; y++)
-        {
-            for (int x = -xOffset; x < W - xOffset; x++)
-                result.push_back(GetAsciiGradient(x, y));
-            result.push_back('\n');
-        }
-
-        return result;
-    }
-
     void DrawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color)
     {
         int maxX = (int)std::ceilf((std::max)(a.x, (std::max)(b.x, c.x)));
@@ -93,5 +52,70 @@ public:
                     Set(x, y, color);
                 }
             }
+    }
+    Color Get(int x, int y) const
+    {
+        int indexX = x + xOffset;
+        int indexY = y + yOffset;
+
+        if (indexX < 0 || indexX >= W || indexY < 0 || indexY >= H)
+            throw std::runtime_error("Index out of bounds");
+
+        return buffer[y + yOffset][x + xOffset];
+    }
+
+    void Set(int x, int y, Color color)
+    {
+        int indexX = x + xOffset;
+        int indexY = y + yOffset;
+
+        if (indexX < 0 || indexX >= W || indexY < 0 || indexY >= H)
+            return;
+
+        buffer[y + yOffset][x + xOffset] = color;
+    }
+
+public:
+    ScreenBuffer() : buffer{}, xOffset(W / 2), yOffset(H / 2) {}
+
+    void Clear()
+    {
+        buffer = {};
+    }
+
+    std::string Display() const
+    {
+        std::string result;
+
+        for (int y = -yOffset; y < H - yOffset; y++)
+        {
+            for (int x = -xOffset; x < W - xOffset; x++)
+                result.append(Get(x, y).display());
+            result.push_back('\n');
+        }
+
+        return result;
+    }
+
+    void drawModel(const Model &model, float focalLength)
+    {
+        std::random_device rng;
+        std::mt19937 gen(rng());
+        std::uniform_int_distribution<int> dist(0, 255);
+        size_t faceIndex1, faceIndex2, faceIndex3;
+
+        for (std::tuple<size_t, size_t, size_t> faceIndices : model.getFaces())
+        {
+            std::tie(faceIndex1, faceIndex2, faceIndex3) = faceIndices;
+            std::vector<Vector3> vertices = model.getVertices();
+            Vector2 vertex1 = projectCoordinate(vertices[faceIndex1], focalLength);
+            Vector2 vertex2 = projectCoordinate(vertices[faceIndex2], focalLength);
+            Vector2 vertex3 = projectCoordinate(vertices[faceIndex3], focalLength);
+            Color color = {
+                .r = static_cast<unsigned char>(dist(gen)),
+                .g = static_cast<unsigned char>(dist(gen)),
+                .b = static_cast<unsigned char>(dist(gen))};
+            DrawTriangle(vertex1, vertex2, vertex3, color);
+        }
     }
 };
