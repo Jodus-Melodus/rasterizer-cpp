@@ -55,11 +55,23 @@ private:
     }
     Color Get(int x, int y) const
     {
+        int indexX = x + xOffset;
+        int indexY = y + yOffset;
+
+        if (indexX < 0 || indexX >= W || indexY < 0 || indexY >= H)
+            throw std::runtime_error("Index out of bounds");
+
         return buffer[y + yOffset][x + xOffset];
     }
 
     void Set(int x, int y, Color color)
     {
+        int indexX = x + xOffset;
+        int indexY = y + yOffset;
+
+        if (indexX < 0 || indexX >= W || indexY < 0 || indexY >= H)
+            return;
+
         buffer[y + yOffset][x + xOffset] = color;
     }
 

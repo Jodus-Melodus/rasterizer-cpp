@@ -21,7 +21,7 @@ int main()
 {
     EnableANSI();
     ScreenBuffer<208, 50> screen;
-    Model model("objects\cube.obj");
+    Model model("../../objects/cone.obj");
     float focalLength = 50.0;
     bool running = true;
 
@@ -41,7 +41,7 @@ int main()
         screen.Clear();
         screen.drawModel(model, focalLength);
         std::cout << "\x1b[2J\x1b[H";
-        std::cout << screen.Display() << std::endl;
+        std::cout << screen.Display() << std::flush;
         std::this_thread::sleep_for(100ms);
     }
     return 0;
