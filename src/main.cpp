@@ -19,14 +19,21 @@ void EnableANSI()
 
 int main()
 {
+    using clock = std::chrono::high_resolution_clock;
     EnableANSI();
     ScreenBuffer<208, 50> screen;
-    Model model("../../objects/cone.obj");
-    float focalLength = 50.0;
+    auto lastFrame = clock::now();
+    Model model("../../objects/nissan.obj");
+    float focalLength = 100.0;
     bool running = true;
+    float rotationSpeed = 1.0;
 
     while (running)
     {
+        auto now = clock::now();
+        std::chrono::duration<float> delta = now - lastFrame;
+        lastFrame = now;
+        float deltaTime = delta.count();
 
         // Keyboard input
         if (_kbhit())
@@ -38,6 +45,7 @@ int main()
             }
         }
 
+        rotateModel(model, Axis::Y, deltaTime * rotationSpeed);
         screen.Clear();
         screen.drawModel(model, focalLength);
         std::cout << "\x1b[2J\x1b[H";

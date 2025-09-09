@@ -14,6 +14,8 @@ private:
 public:
     Model(const std::vector<Vector3> &vertices, const std::vector<std::tuple<size_t, size_t, size_t>> &faces) : vertices(std::move(vertices)), faces(std::move(faces)) {};
     Model(const std::string &path);
+    std::vector<Vector3> &getVertices();
+    std::vector<std::tuple<size_t, size_t, size_t>> &getFaces();
     const std::vector<Vector3> &getVertices() const;
     const std::vector<std::tuple<size_t, size_t, size_t>> &getFaces() const;
 };
