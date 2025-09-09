@@ -22,10 +22,10 @@ int main()
     using clock = std::chrono::high_resolution_clock;
     EnableANSI();
     ScreenBuffer<208, 50> screen;
-    Model model("../../objects/cone.obj");
-    float focalLength = 50.0;
-    bool running = true;
     auto lastFrame = clock::now();
+    Model model("../../objects/nissan.obj");
+    float focalLength = 100.0;
+    bool running = true;
     float rotationSpeed = 1.0;
 
     while (running)
@@ -45,7 +45,6 @@ int main()
             }
         }
 
-        rotateModel(model, Axis::X, deltaTime * rotationSpeed);
         rotateModel(model, Axis::Y, deltaTime * rotationSpeed);
         screen.Clear();
         screen.drawModel(model, focalLength);

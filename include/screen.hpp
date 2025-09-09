@@ -23,7 +23,7 @@ Vector3 projectCoordinate(Vector3 p, float focalLength)
     float denominator = focalLength + p.z;
     if (denominator == 0.0)
         denominator = 0.00001;
-    return Vector3((focalLength * p.x) / denominator, (focalLength * p.y) / denominator, p.z);
+    return Vector3((focalLength * p.x) / denominator, -(focalLength * p.y) / denominator, p.z);
 }
 
 float normalizeDepth(const float z, const float nearPlane, const float farPlane)
@@ -38,9 +38,9 @@ void rotateModel(Model &model, const Axis rotation, const float theta)
 
     for (Vector3 &vertex : model.getVertices())
     {
-        float x = vertex.x;
-        float y = vertex.y;
-        float z = vertex.z;
+        const float x = vertex.x;
+        const float y = vertex.y;
+        const float z = vertex.z;
 
         switch (rotation)
         {
@@ -153,7 +153,8 @@ public:
     void Clear()
     {
         buffer = {};
-        depthBuffer = {};
+        for (auto &row : depthBuffer)
+            std::fill(row.begin(), row.end(), INFINITY);
     }
 
     std::string Display() const
@@ -173,14 +174,14 @@ public:
     void drawModel(const Model &model, float focalLength)
     {
         std::random_device rng;
-        std::mt19937 gen(rng());
+        static thread_local std::mt19937 gen(rng());
         std::uniform_int_distribution<int> dist(0, 255);
         size_t faceIndex1, faceIndex2, faceIndex3;
 
         for (std::tuple<size_t, size_t, size_t> faceIndices : model.getFaces())
         {
             std::tie(faceIndex1, faceIndex2, faceIndex3) = faceIndices;
-            std::vector<Vector3> vertices = model.getVertices();
+            const std::vector<Vector3> &vertices = model.getVertices();
             Vector3 vertex1 = projectCoordinate(vertices[faceIndex1], focalLength);
             Vector3 vertex2 = projectCoordinate(vertices[faceIndex2], focalLength);
             Vector3 vertex3 = projectCoordinate(vertices[faceIndex3], focalLength);

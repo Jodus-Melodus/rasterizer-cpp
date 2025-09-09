@@ -66,6 +66,11 @@ std::vector<Vector3> &Model::getVertices()
     return vertices;
 }
 
+std::vector<std::tuple<size_t, size_t, size_t>> &Model::getFaces()
+{
+    return faces;
+}
+
 const std::vector<Vector3> &Model::getVertices() const
 {
     return vertices;
