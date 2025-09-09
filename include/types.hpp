@@ -20,3 +20,10 @@ struct Color
         return std::format("\x1b[38;2;{};{};{}m{}\x1b[0m", r, g, b, asChar());
     }
 };
+
+enum Axis
+{
+    X,
+    Y,
+    Z
+};

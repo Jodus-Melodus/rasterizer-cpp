@@ -61,6 +61,11 @@ Model::Model(const std::string &path)
     }
 }
 
+std::vector<Vector3> &Model::getVertices()
+{
+    return vertices;
+}
+
 const std::vector<Vector3> &Model::getVertices() const
 {
     return vertices;

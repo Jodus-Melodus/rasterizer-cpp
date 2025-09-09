@@ -119,3 +119,34 @@ public:
         }
     }
 };
+
+void rotateModel(Model &model, const Axis rotation, const float theta)
+{
+    const float sinTheta = sinf(theta);
+    const float cosTheta = cosf(theta);
+
+    for (Vector3 &vertex : model.getVertices())
+    {
+        float x = vertex.x;
+        float y = vertex.y;
+        float z = vertex.z;
+
+        switch (rotation)
+        {
+        case X:
+            vertex.y = y * cosTheta - z * sinTheta;
+            vertex.z = y * sinTheta + z * cosTheta;
+            break;
+        case Y:
+            vertex.x = x * cosTheta + z * sinTheta;
+            vertex.z = -x * sinTheta + z * cosTheta;
+            break;
+        case Z:
+            vertex.x = x * cosTheta - y * sinTheta;
+            vertex.y = x * sinTheta + y * cosTheta;
+            break;
+        default:
+            throw std::runtime_error("Unexpected rotation axis!");
+        }
+    }
+}
