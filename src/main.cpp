@@ -23,7 +23,7 @@ int main()
     EnableANSI();
     ScreenBuffer<208, 50> screen;
     auto lastFrame = clock::now();
-    Model model("../../objects/nissan.obj");
+    Model model("../../objects/cube.obj", "../../textures/test.png");
     float focalLength = 100.0;
     bool running = true;
     float rotationSpeed = 1.0;

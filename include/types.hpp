@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <format>
 
 const char GRADIENT[] = {' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'};
 
@@ -26,4 +28,18 @@ enum Axis
     X,
     Y,
     Z
+};
+
+class Vector2
+{
+public:
+    float x, y;
+    Vector2(float x, float y);
+};
+
+class Vector3
+{
+public:
+    float x, y, z;
+    Vector3(float x, float y, float z);
 };
