@@ -4,7 +4,6 @@
 #include <tuple>
 #include <algorithm>
 #include <cmath>
-#include <random>
 #include "types.hpp"
 #include "model.hpp"
 
@@ -61,6 +60,20 @@ void rotateModel(Model &model, const Axis rotation, const float theta)
     }
 }
 
+std::tuple<size_t, size_t> interpolateTextureCoords(Vector2 textureCoord1, Vector2 textureCoord2, Vector2 textureCoord3, const float u, const float v, const float w, const size_t textureWidth, const size_t textureHeight)
+{
+    float textureX = u * textureCoord1.x + v * textureCoord2.x + w * textureCoord3.x;
+    float textureY = u * textureCoord1.y + v * textureCoord2.y + w * textureCoord3.y;
+
+    float scaledX = textureX * (static_cast<float>(textureWidth) - 1.0f);
+    float scaledY = textureY * (static_cast<float>(textureHeight) - 1.0f);
+
+    size_t pX = static_cast<size_t>(std::clamp(roundf(scaledX), 0.0f, static_cast<float>(textureWidth - 1)));
+    size_t pY = static_cast<size_t>(std::clamp(roundf(scaledY), 0.0f, static_cast<float>(textureHeight - 1)));
+
+    return std::make_tuple(pX, pY);
+}
+
 template <const int W, const int H>
 class ScreenBuffer
 {
@@ -70,7 +83,7 @@ private:
     int xOffset;
     int yOffset;
 
-    void DrawTriangle(Vector3 a, Vector3 b, Vector3 c, Color color)
+    void DrawTriangle(Vector3 a, Vector3 b, Vector3 c, const std::tuple<Vector2, Vector2, Vector2> &textureCoordinates, const std::vector<std::vector<Color>> &texture)
     {
         int maxX = (int)std::ceilf((std::max)(a.x, (std::max)(b.x, c.x)));
         int minX = (int)std::floorf((std::min)(a.x, (std::min)(b.x, c.x)));
@@ -93,6 +106,11 @@ private:
                 if ((u >= 0.0) && (v >= 0.0) && (w >= 0.0))
                 {
                     float depth = normalizeDepth(u * a.z + v * b.z + w * c.z, nearPlane, farPlane);
+                    const auto &[textureCoord1, textureCoord2, textureCoord3] = textureCoordinates;
+                    size_t textureCoordinateX, textureCoordinateY;
+                    std::tie(textureCoordinateX, textureCoordinateY) = interpolateTextureCoords(textureCoord1, textureCoord2, textureCoord3, u, v, w, texture[0].size(), texture.size());
+
+                    Color color = texture[textureCoordinateY][textureCoordinateX];
 
                     if (depth < GetDepthBuffer(x, y))
                     {
@@ -102,6 +120,7 @@ private:
                 }
             }
     }
+
     Color Get(int x, int y) const
     {
         int indexX = x + xOffset;
@@ -172,24 +191,25 @@ public:
 
     void drawModel(const Model &model, float focalLength)
     {
-        std::random_device rng;
-        static thread_local std::mt19937 gen(rng());
-        std::uniform_int_distribution<int> dist(0, 255);
-        size_t faceIndex1, faceIndex2, faceIndex3;
+        size_t faceIndex1, faceIndex2, faceIndex3, textureIndex1, textureIndex2, textureIndex3;
 
-        for (std::tuple<size_t, size_t, size_t> faceIndices : model.getFaces())
+        for (const auto &faces : model.getFaces())
         {
-            std::tie(faceIndex1, faceIndex2, faceIndex3) = faceIndices;
+            const auto &[vertexIndices, textureIndices] = faces;
+            const auto &[faceIndex1, faceIndex2, faceIndex3] = vertexIndices;
+            const auto &[textureIndex1, textureIndex2, textureIndex3] = textureIndices;
+
             const std::vector<Vector3> &vertices = model.getVertices();
+            const std::vector<Vector2> &textureCoordinates = model.getTextureCoordinates();
+            const std::vector<std::vector<Color>> &texture = model.getTexture();
             Vector3 vertex1 = projectCoordinate(vertices[faceIndex1], focalLength);
             Vector3 vertex2 = projectCoordinate(vertices[faceIndex2], focalLength);
             Vector3 vertex3 = projectCoordinate(vertices[faceIndex3], focalLength);
+            const std::tuple<Vector2, Vector2, Vector2> textureCoords = std::make_tuple(textureCoordinates[textureIndex1],
+                                                                                        textureCoordinates[textureIndex2],
+                                                                                        textureCoordinates[textureIndex3]);
 
-            Color color = {
-                .r = static_cast<unsigned char>(dist(gen)),
-                .g = static_cast<unsigned char>(dist(gen)),
-                .b = static_cast<unsigned char>(dist(gen))};
-            DrawTriangle(vertex1, vertex2, vertex3, color);
+            DrawTriangle(vertex1, vertex2, vertex3, textureCoords, texture);
         }
     }
 };

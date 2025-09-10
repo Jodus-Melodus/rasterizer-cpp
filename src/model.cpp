@@ -1,13 +1,14 @@
-#include "model.hpp"
-#include "types.hpp"
-
 #include <fstream>
 #include <sstream>
 #include <array>
+#include <iostream>
+#include "model.hpp"
+#include "types.hpp"
+#include "stb_image.h"
 
-Model::Model(const std::string &path)
+Model::Model(const std::string &modelPath, const std::string &texturePath)
 {
-    std::ifstream file(path);
+    std::ifstream file(modelPath);
     if (!file.is_open())
         throw std::runtime_error("Failed to open obj file");
 
@@ -33,9 +34,18 @@ Model::Model(const std::string &path)
             Vector3 vec(x, y, z);
             vertices.push_back(vec);
         }
+        if (tokens[0] == "vt")
+        {
+            if (tokens.size() != 3)
+                throw std::runtime_error("Invalid object file: expected 2 vertex coordinates");
+            float u = std::stof(tokens[1]);
+            float v = std::stof(tokens[2]);
+            Vector2 coordinate(u, v);
+            textureCoordinates.push_back(coordinate);
+        }
         else if (tokens[0] == "f")
         {
-            std::vector<size_t> faceIndices;
+            std::vector<size_t> faceIndices, textureIndices;
             for (size_t i = 1; i < tokens.size(); i++)
             {
                 std::vector<size_t> indices;
@@ -53,12 +63,45 @@ Model::Model(const std::string &path)
                 size_t normalIndex = indices[2] - 1;
 
                 faceIndices.push_back(vertexIndex);
+                textureIndices.push_back(textureIndex);
             }
 
             for (size_t i = 1; i < faceIndices.size() - 1; i++)
-                faces.push_back(std::make_tuple(faceIndices[0], faceIndices[i], faceIndices[i + 1]));
+                faces.push_back(std::make_tuple(
+                    std::make_tuple(faceIndices[0], faceIndices[i], faceIndices[i + 1]),
+                    std::make_tuple(textureIndices[0], textureIndices[i], textureIndices[i + 1])));
         }
     }
+
+    int width, height, channels;
+    unsigned char *data = stbi_load(texturePath.c_str(), &width, &height, &channels, 0);
+    if (!data)
+    {
+        std::cerr << "Failed to load image" << std::endl;
+        return;
+    }
+
+    std::vector<std::vector<Color>> textureTemp(height, std::vector<Color>(width));
+
+    for (size_t y = 0; y < height; y++)
+    {
+        for (size_t x = 0; x < width; x++)
+        {
+            int index = (y * width + x) * channels;
+
+            unsigned char r = data[index + 0];
+            unsigned char g = (channels > 1) ? data[index + 1] : 0;
+            unsigned char b = (channels > 2) ? data[index + 2] : 0;
+            unsigned char a = (channels > 3) ? data[index + 3] : 255;
+            Color color = {r, g, b};
+
+            textureTemp[y][x] = color;
+        }
+    }
+
+    texture = textureTemp;
+
+    stbi_image_free(data);
 }
 
 std::vector<Vector3> &Model::getVertices()
@@ -66,7 +109,7 @@ std::vector<Vector3> &Model::getVertices()
     return vertices;
 }
 
-std::vector<std::tuple<size_t, size_t, size_t>> &Model::getFaces()
+std::vector<std::tuple<std::tuple<size_t, size_t, size_t>, std::tuple<size_t, size_t, size_t>>> &Model::getFaces()
 {
     return faces;
 }
@@ -76,7 +119,17 @@ const std::vector<Vector3> &Model::getVertices() const
     return vertices;
 }
 
-const std::vector<std::tuple<size_t, size_t, size_t>> &Model::getFaces() const
+const std::vector<std::tuple<std::tuple<size_t, size_t, size_t>, std::tuple<size_t, size_t, size_t>>> &Model::getFaces() const
 {
     return faces;
+}
+
+const std::vector<Vector2> &Model::getTextureCoordinates() const
+{
+    return textureCoordinates;
+}
+
+const std::vector<std::vector<Color>> &Model::getTexture() const
+{
+    return texture;
 }
