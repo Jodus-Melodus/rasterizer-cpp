@@ -1,5 +1,5 @@
 #include "model.hpp"
-#include "vector.hpp"
+#include "types.hpp"
 
 #include <fstream>
 #include <sstream>

@@ -7,7 +7,6 @@
 #include <random>
 #include "types.hpp"
 #include "model.hpp"
-#include "vector.hpp"
 
 std::tuple<float, float, float> calculateBarycentricCoordinates(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
 {
