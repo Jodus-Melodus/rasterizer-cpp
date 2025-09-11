@@ -48,7 +48,7 @@ int main()
         rotateModel(model, Axis::Y, deltaTime * rotationSpeed);
         screen.Clear();
         screen.drawModel(model, focalLength);
-        std::cout << "\x1b[2J\x1b[H";
+        std::cout << "\x1b[H";
         std::cout << screen.Display() << std::flush;
         std::this_thread::sleep_for(100ms);
     }
